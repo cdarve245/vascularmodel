@@ -392,19 +392,30 @@ function generateContent(modelData) {
 
 function addHoverListeners(id)
 {
-  $("#" + id + "_hover").hover(function() {
+  if(!smallScreen)
+  {
+    $("#" + id + "_hover").hover(function() {
+      var zoomIn = document.getElementById(id + "_zoomIn");
+      zoomIn.setAttribute("style", "opacity: 1");
+  
+      var detailsImg = document.getElementById(id + "_details");
+      detailsImg.setAttribute("style", "opacity: 1");
+    }, function(){
+      var zoomIn = document.getElementById(id + "_zoomIn");
+      zoomIn.setAttribute("style", "opacity: 0");
+  
+      var detailsImg = document.getElementById(id + "_details");
+      detailsImg.setAttribute("style", "opacity: 0");
+    });
+  }
+  else
+  {
     var zoomIn = document.getElementById(id + "_zoomIn");
     zoomIn.setAttribute("style", "opacity: 1");
-
+  
     var detailsImg = document.getElementById(id + "_details");
     detailsImg.setAttribute("style", "opacity: 1");
-  }, function(){
-    var zoomIn = document.getElementById(id + "_zoomIn");
-    zoomIn.setAttribute("style", "opacity: 0");
-
-    var detailsImg = document.getElementById(id + "_details");
-    detailsImg.setAttribute("style", "opacity: 0");
-  });
+  }
 }
 
 function removeContent() {
