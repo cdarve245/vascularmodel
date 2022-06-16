@@ -148,7 +148,8 @@ function updatedSelectedList(model)
 
 function zoomInPicture(model)
 {
-  document.getElementById("zoomInPicture").innerHTML = "";
+  var container = document.getElementById("zoomInPicture");
+  container.innerHTML = "";
 
   let image = document.createElement("img");
   image.src = 'img/vmr-images/' + model['Name'] + '.png';
@@ -156,7 +157,9 @@ function zoomInPicture(model)
   image.setAttribute("id",model['Name'] + "_zoomInImage");
   image.setAttribute("class", "zoomInPicture");
 
-  document.getElementById("zoomInPicture").appendChild(image);
+  container.appendChild(image);
+  container.style.opacity = 1;
+  container.style.zIndex = 2;
 }
 
 function greetingText(data)

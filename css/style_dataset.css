@@ -250,11 +250,14 @@ gallery
   position: fixed;
   z-index: 2;
   float: center;
-  height: 75%;
-  width: 75%;
+  height: 60%;
+  width: 60%;
+  top: 20%;
+  right: 20%;
   background-color: white;
   float: center;
 }
+
 .zoomInPicture {
   height: 100%;
   width: 100%;
