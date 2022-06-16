@@ -249,13 +249,12 @@ gallery
 #zoomInPicture {
   position: fixed;
   z-index: 2;
-  float: center;
   height: 60%;
   width: 60%;
   top: 20%;
   right: 20%;
   background-color: white;
-  float: center;
+  border: 2px solid var(--grey);
 }
 
 .zoomInPicture {
@@ -270,6 +269,15 @@ gallery
   left: 30px;
   object-fit: cover;
   font-size: 200%;
+  padding: 5px;
+}
+
+.top-right {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  object-fit: cover;
+  font-size: 150%;
   padding: 5px;
 }
 
@@ -551,7 +559,7 @@ error msg block behavior
   cursor: pointer;
 }
 
-.closeAllButton:hover .returnToGalleryButton:hover{
+.closeAllButton:hover .returnToGalleryButton .closeImage:hover{
   background-color: #ebebeb;
 }
 
@@ -559,6 +567,12 @@ error msg block behavior
   border: 2px solid grey;
   padding: 10px;
   margin-top: 15px;
+  cursor: pointer;
+}
+
+.closeImage {
+  border: 2px solid grey;
+  padding: 10px;
   cursor: pointer;
 }
 

@@ -157,9 +157,23 @@ function zoomInPicture(model)
   image.setAttribute("id",model['Name'] + "_zoomInImage");
   image.setAttribute("class", "zoomInPicture");
 
+  let close = document.createElement("button");
+  close.classList.add("closeImage");
+  close.classList.add("top-right");
+  close.setAttribute("id", "closeImage")
+  close.textContent = "Close";
+
+  container.appendChild(close);
   container.appendChild(image);
+  addCloseHook(container);
   container.style.opacity = 1;
   container.style.zIndex = 2;
+}
+function addCloseHook(container){
+  $('#closeImage').on('click', function(){
+    container.style.opacity = 0;
+    container.style.zIndex = 0;
+  });
 }
 
 function greetingText(data)
@@ -498,7 +512,6 @@ $(document).ready(function($){
     }
   });
 });
-
 // this function is called whenever "Filters" is pressed. It applies the
 // "filter-is-visible" class to all elements in elementsToTrigger. The behavior
 // filter-is-visible is determined in style_dataset.css
