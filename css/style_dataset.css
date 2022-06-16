@@ -242,17 +242,35 @@ gallery
   padding: 5px;
 }
 
-/* center text */
-/* .center {
+.top-left:hover {
+  color: var(--midpointSelectApplied);
+}
+
+#zoomInPicture {
+  position: fixed;
+  z-index: 2;
+  float: center;
+  height: 75%;
+  width: 75%;
+  background-color: white;
+  float: center;
+}
+.zoomInPicture {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
+.bottom-left {
   position: absolute;
-  top: 30px;
+  bottom: 30px;
   left: 30px;
   object-fit: cover;
-  font-size: 150%;
+  font-size: 200%;
   padding: 5px;
-} */
+}
 
-.top-left:hover {
+.bottom-left:hover {
   color: var(--midpointSelectApplied);
 }
 

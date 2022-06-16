@@ -19,6 +19,7 @@ $("#closeAllButton").click(function() {
 function addClickListener(model) {
   $('#' + model['Name']  + "_details").click(function() {greetingText(model); checkOverlay(); console.log("through magnif");});
   $('#' + model['Name']).click(function() {updatedSelectedList(model);});
+  $('#' + model['Name'] + "_zoomIn").click(function() {zoomInPicture(model);});
 }
 
 $("#select-all").click(function() {
@@ -143,6 +144,19 @@ function updatedSelectedList(model)
       bucket.classList.remove("selected");
     }
   }, 750);
+}
+
+function zoomInPicture(model)
+{
+  document.getElementById("zoomInPicture").innerHTML = "";
+
+  let image = document.createElement("img");
+  image.src = 'img/vmr-images/' + model['Name'] + '.png';
+  image.alt = model['Name'];
+  image.setAttribute("id",model['Name'] + "_zoomInImage");
+  image.setAttribute("class", "zoomInPicture");
+
+  document.getElementById("zoomInPicture").appendChild(image);
 }
 
 function greetingText(data)
@@ -325,27 +339,55 @@ function generateContent(modelData) {
 
   let aWrap = document.createElement("a");
   aWrap.classList.add("a-img")
-  // aWrap.setAttribute("id",modelData['Name']);
+  aWrap.setAttribute("id",modelData['Name'] + "_hover");
 
   let detailsImg = document.createElement("i");
   detailsImg.classList.add("fa-solid");
   detailsImg.classList.add("fa-pink");
   detailsImg.classList.add("fa-magnifying-glass");
   detailsImg.classList.add("top-left");
+  detailsImg.setAttribute("style", "opacity: 0");
   detailsImg.setAttribute("title", "View Details");
-  detailsImg.setAttribute("id",modelData['Name'] + "_details");
+  detailsImg.setAttribute("id", modelData['Name'] + "_details");
+
+  let zoomIn = document.createElement("i");
+  zoomIn.classList.add("fa-solid");
+  zoomIn.classList.add("fa-plus");
+  zoomIn.classList.add("bottom-left");
+  zoomIn.setAttribute("style", "opacity: 0");
+  zoomIn.setAttribute("title", "Zoom Into Picture");
+  zoomIn.setAttribute("id", modelData['Name'] + "_zoomIn");
 
   let innerImg = document.createElement("img");
   innerImg.src = 'img/vmr-images/' + modelData['Name'] + '.png'
   innerImg.alt = modelData['Name']
   innerImg.setAttribute("id",modelData['Name']);
 
-  aWrap.appendChild(innerImg)
-  aWrap.appendChild(detailsImg)
+  aWrap.appendChild(innerImg);
+  aWrap.appendChild(detailsImg);
+  aWrap.appendChild(zoomIn);
   divModelImage.appendChild(aWrap);
   div.appendChild(divModelImage);
+  var hook = modelData['Name'];
+  
+  return [div, hook]
+}
 
-  return div
+function addHoverListeners(id)
+{
+  $("#" + id + "_hover").hover(function() {
+    var zoomIn = document.getElementById(id + "_zoomIn");
+    zoomIn.setAttribute("style", "opacity: 1");
+
+    var detailsImg = document.getElementById(id + "_details");
+    detailsImg.setAttribute("style", "opacity: 1");
+  }, function(){
+    var zoomIn = document.getElementById(id + "_zoomIn");
+    zoomIn.setAttribute("style", "opacity: 0");
+
+    var detailsImg = document.getElementById(id + "_details");
+    detailsImg.setAttribute("style", "opacity: 0");
+  });
 }
 
 function removeContent() {
@@ -371,8 +413,9 @@ function populate(dataArray, num_images = 24) {
   }
   for (var i = curIndex; i < ubound; i++) {
     var newContent = generateContent(dataArray[i]);
-    modelList.appendChild(newContent);
+    modelList.appendChild(newContent[0]);
     addClickListener(dataArray[i])
+    addHoverListeners(newContent[1])
   }
   curIndex = ubound;
 }
