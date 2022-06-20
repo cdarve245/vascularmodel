@@ -435,12 +435,14 @@ error msg block behavior
   border: 2px solid var(--grey);
 }
 
-.finishedDownload {
-  width: 50%;
-  height: 50%;
+.downloadingDone {
+  bottom: 15px;
+  right: 15px;
+  width: 300px;
+  height: 55px;
   background-color: white;
   z-index: 1;
-  position: absolute;
+  position: fixed;
   border: 2px solid var(--grey);
 }
 
@@ -448,8 +450,9 @@ error msg block behavior
   height: 100%;
   width: 100%;
   padding: 15px;
-  float: right;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: "Poppins", sans-serif;
 }
 

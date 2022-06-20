@@ -539,12 +539,19 @@ $('.download-button-modal').click(function() {
   window.open('svprojects/' + viewingModel + '.zip')
 });
 
-function updateProgressIcon()
+function updateProgressIcon(done)
 {
   progressIcon.innerHTML = ""
   var div = document.createElement("div");
   div.classList.add("downloadProgressDiv")
-  div.textContent = modelsDownloaded + "/" + selectedModels.filter(value => value === true).length + " models"
+  if(done)
+  {
+    div.textContent = "Downloads complete!"
+  }
+  else
+  {
+    div.textContent = modelsDownloaded + "/" + selectedModels.filter(value => value === true).length + " models"
+  }
   progressIcon.appendChild(div);
 }
 
@@ -606,8 +613,10 @@ async function trackProgress(fileUrl) {
 
 function downloadFinished()
 {
+  updateProgressIcon(true)
   progressIcon.classList.remove("downloading")
-  progressIcon.classList.add("finishedDownload")
+  progressIcon.classList.add("downloadingDone");
+  
 }
 
 // function downloadFinished()
