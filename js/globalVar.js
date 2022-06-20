@@ -14,6 +14,8 @@ var wantsToSelectAllInBucket = false;
 var isOverlayOn = false;
 var isSafeSelected = false;
 var listOfNames;
+var progressIcon = document.getElementById("downloadProgress");
+var modelsDownloaded = 0;
 
 //returns the keys of *all* the categories
 function getAllCategories()

@@ -539,7 +539,19 @@ $('.download-button-modal').click(function() {
   window.open('svprojects/' + viewingModel + '.zip')
 });
 
+function updateProgressIcon()
+{
+  progressIcon.innerHTML = ""
+  var div = document.createElement("div");
+  div.classList.add("downloadProgressDiv")
+  div.textContent = modelsDownloaded + "/" + selectedModels.filter(value => value === true).length + " models"
+  progressIcon.appendChild(div);
+}
+
 $('#download-all').click(function() {
+  progressIcon.setAttribute("style", "opacity: 1");
+  modelsDownloaded = 0;
+  updateProgressIcon();
   listOfNames = []
 
   for(var i = 0; i < selectedModels.length; i++)
@@ -550,7 +562,7 @@ $('#download-all').click(function() {
     }
   }
 
-  // listOfNames = ["0082_0001", "0129_0000", "0139_1001"]
+  listOfNames = ["0082_0001", "0129_0000", "0139_1001"]
   
   if(listOfNames.length > 0)
   {
@@ -574,12 +586,18 @@ async function trackProgress(fileUrl) {
     const {done, value} = await reader.read();
 
     if (done) {
-      listOfNames.shift();
+      listOfNames.shift();      
       if(listOfNames.length != 0){
+        modelsDownloaded++;
+        updateProgressIcon();
         viewingModel = listOfNames[0];
         var fileUrl = 'svprojects/' + viewingModel + '.zip';
         sendToDownload(fileUrl, viewingModel);
         trackProgress(fileUrl);
+      }
+      else
+      {
+        downloadFinished();
       }
       return true;
     }
@@ -588,14 +606,21 @@ async function trackProgress(fileUrl) {
 
 function downloadFinished()
 {
-  selectedModels.fill(false);
-  scrollToTop();
-  removeContent();
-  populate([]);
-  errorMessage(true, "justdownloaded")
-  viewingSelectedModels = true;
-  updateCounters(lastFapplied, filteredData, "justdownloaded");
+  progressIcon.classList.remove("downloading")
+  progressIcon.classList.add("finishedDownload")
 }
+
+// function downloadFinished()
+// {
+//   progressIcon.setAttribute("style", "opacity: 0");
+//   selectedModels.fill(false);
+//   scrollToTop();
+//   removeContent();
+//   populate([]);
+//   errorMessage(true, "justdownloaded")
+//   viewingSelectedModels = true;
+//   updateCounters(lastFapplied, filteredData, "justdownloaded");
+// }
 
 function sendToDownload(modelToDownloadName)
 {
