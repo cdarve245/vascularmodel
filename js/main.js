@@ -539,14 +539,65 @@ $('.download-button-modal').click(function() {
   window.open('svprojects/' + viewingModel + '.zip')
 });
 
-$("#download-all").click(function () {
-  if (selectedModels.filter(value => value === true).length > 0)
+$('#download-all').click(function() {
+  listOfNames = []
+
+  for(var i = 0; i < selectedModels.length; i++)
   {
-    downloadAllSelectedModels();
+    if(selectedModels[i])
+    {
+      listOfNames.push(data[i]["Name"])
+    }
+  }
+
+  // listOfNames = ["0082_0001", "0129_0000", "0139_1001"]
+  
+  if(listOfNames.length > 0)
+  {
+    viewingModel = listOfNames[0];
+    var fileUrl = 'svprojects/' + viewingModel + '.zip';
+    sendToDownload(fileUrl, viewingModel);
+    trackProgress(fileUrl);
   }
 });
 
-function downloadModel(modelToDownloadName)
+async function trackProgress(fileUrl) {
+  // instead of response.json() and other methods
+  let response = await fetch(fileUrl);
+
+  const reader = response.body.getReader();
+
+  // infinite loop while the body is downloading
+  while(true) {
+    // done is true for the last chunk
+    // value is Uint8Array of the chunk bytes
+    const {done, value} = await reader.read();
+
+    if (done) {
+      listOfNames.shift();
+      if(listOfNames.length != 0){
+        viewingModel = listOfNames[0];
+        var fileUrl = 'svprojects/' + viewingModel + '.zip';
+        sendToDownload(fileUrl, viewingModel);
+        trackProgress(fileUrl);
+      }
+      return true;
+    }
+  }
+}
+
+function downloadFinished()
+{
+  selectedModels.fill(false);
+  scrollToTop();
+  removeContent();
+  populate([]);
+  errorMessage(true, "justdownloaded")
+  viewingSelectedModels = true;
+  updateCounters(lastFapplied, filteredData, "justdownloaded");
+}
+
+function sendToDownload(modelToDownloadName)
 {
   var fileUrl = 'svprojects/' + modelToDownloadName + '.zip';
   var a = document.createElement("a");
@@ -560,32 +611,6 @@ function downloadModel(modelToDownloadName)
     'event_label': 'test',
     'value': '1'
 });
-}
-
-function downloadAllSelectedModels(){
-
-  listOfNames = []
-
-  for(var i = 0; i < selectedModels.length; i++)
-  {
-    if(selectedModels[i])
-    {
-      listOfNames.push(data[i]["Name"])
-    }
-  }
-
-  for(var i = 0; i < listOfNames.length; i++)
-  {
-    downloadModel(listOfNames[i]);
-  }
-
-  selectedModels.fill(false);
-  scrollToTop();
-  removeContent();
-  populate([]);
-  errorMessage(true, "justdownloaded")
-  viewingSelectedModels = true;
-  updateCounters(lastFapplied, filteredData, "justdownloaded");
 }
 
 $("#returnToGalleryButton").click(function () {

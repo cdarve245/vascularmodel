@@ -13,7 +13,7 @@ var wantsToSelectAllInFiltered = false;
 var wantsToSelectAllInBucket = false;
 var isOverlayOn = false;
 var isSafeSelected = false;
-
+var listOfNames;
 
 //returns the keys of *all* the categories
 function getAllCategories()
