@@ -36,7 +36,7 @@ $("#select-all").click(function() {
 $("#safeOfOverlayClick").click(function() {isSafeSelected = true; console.log("safe true")});
 
 $('#overlay').click(function() {
-  checkOverlay(); 
+  checkOverlay();
   isSafeSelected = !isSafeSelected;
 
   console.log("through overlay; safe now: " + isSafeSelected);
@@ -120,7 +120,7 @@ function updatedSelectedList(model)
 {
   selectedModels[data.indexOf(model)] = !selectedModels[data.indexOf(model)];
   var bucket = document.getElementById("view-selected");
-  
+
   if(selectedModels[data.indexOf(model)])
   {
     var element = document.getElementById(model['Name'] + "_isSelected");
@@ -150,7 +150,7 @@ function greetingText(data)
   viewingModel = data['Name'];
   $('.details-text').scrollTop(0);
   $('#modal-greeting')[0].innerText = 'You are viewing ' + data['Name'] + '.\nHere are the details:'
-    
+
   var details = []
   var categoryName = getCategoryName();
 
@@ -204,7 +204,69 @@ function greetingText(data)
   }
   var size = parseInt(data['Size']) / 1000000
   $('.details-text')[0].value = details
-  $('#modal-closure')[0].innerText = 'The size of this project is ' + size.toFixed(2) + ' Mb (' + (size/1000).toFixed(2) + ' Gb).'
+
+  var modalclosure = document.getElementById("modal-closure");
+  modalclosure.innerHTML = "";
+
+  if(data["Notes"] != '-')
+  {
+    notes = data["Notes"];
+    if(notes.includes("\\url"))
+    {
+      modalclosure.innerHTML = "";
+      indexOfStartOfTag = notes.indexOf("\\url");
+
+      indexOfStartOfLink = notes.indexOf("(\"");
+      indexOfEndOfLink = notes.indexOf("\",", indexOfStartOfLink);
+      url = notes.substring(indexOfStartOfLink + 2, indexOfEndOfLink);
+
+      indexOfStartOfWord = notes.indexOf(" \"", indexOfEndOfLink);
+      indexOfEndOfWord = notes.indexOf("\")", indexOfStartOfWord);
+      word = notes.substring(indexOfStartOfWord + 2, indexOfEndOfWord);
+
+      var pBefore = document.createElement("span");
+      pBefore.textContent = notes.substring(0, indexOfStartOfTag);
+      modalclosure.appendChild(pBefore);
+
+      var a = document.createElement("a")
+      a.setAttribute("href", url);
+      a.setAttribute("target", "_blank");
+      a.classList.add("link");
+      a.textContent = word;
+
+      if(url.includes(".zip"))
+      {
+        a.setAttribute("download", "");
+      }
+
+      modalclosure.appendChild(a);
+
+      var pAfter = document.createElement("span");
+      pAfter.textContent = notes.substring(indexOfEndOfWord + 2);
+      modalclosure.appendChild(pAfter);
+
+      var sizeText = document.createElement("div");
+      sizeText.classList.add("newParagraph");
+      sizeText.textContent = '\n\nThe size of this project is ' + size.toFixed(2) + ' MB (' + (size/1000).toFixed(2) + ' GB).';
+      modalclosure.appendChild(sizeText);
+    }
+    else
+    {
+      var text = document.createElement("span");
+      text.classList.add("newParagraph");
+      text.textContent = data["Notes"];
+      modalclosure.appendChild(text);
+      
+      var sizeText = document.createElement("div");
+      sizeText.classList.add("newParagraph");
+      sizeText.textContent = '\n\nThe size of this project is ' + size.toFixed(2) + ' MB (' + (size/1000).toFixed(2) + ' GB).';
+      modalclosure.appendChild(sizeText);
+    }
+  }
+  else
+  {
+    modalclosure.innerText = 'The size of this project is ' + size.toFixed(2) + ' MB (' + (size/1000).toFixed(2) + ' GB).'
+  }
 }
 
 //grammar for commas and ands
@@ -257,12 +319,19 @@ function ageCalculator(value)
   }
 }
 
+function preventScroll(e){
+    e.preventDefault();
+    e.stopPropagation();
+
+    return false;
+}
+
 function overlayOn(){
   document.getElementById("overlay").style.display = "block";
   isOverlayOn = true;
 
   $('.modalDialog').css({"opacity":"1", "pointer-events": "auto"})
-  
+
   var prevBodyY = window.scrollY
   if (smallScreen) {
     // padding is not necessary on mobile
@@ -273,9 +342,9 @@ function overlayOn(){
     $('.html').css({"height": "auto", "overflow-y": "hidden", "padding-right": "7px"})
     $('.body').css({"height": "auto", "overflow-y": "hidden", "padding-right": "7px"})
   }
+  document.querySelector('.body').addEventListener('scroll', preventScroll, {passive: false});
   document.body.style.position = '';
   document.body.style.top = `-${prevBodyY}px`;
-
 }
 function overlayOff(){
   document.getElementById("overlay").style.display = "none";
@@ -290,6 +359,7 @@ function overlayOff(){
   document.body.style.position = '';
   document.body.style.top = '';
   window.scrollTo(0, parseInt(scrollY || '0') * -1);
+  document.querySelector('.body').removeEventListener('scroll', preventScroll);
 }
 
 function checkOverlay(){
@@ -411,7 +481,7 @@ $(document).ready(function($){
     triggerFilter(false);
   });
 
-  
+
 
   //close filter dropdown inside lateral .cd-filter
 	$('.cd-filter-block h4').on('click', function(){
@@ -483,7 +553,7 @@ function downloadModel(modelToDownloadName)
   a.href = fileUrl;
   a.setAttribute("download", modelToDownloadName);
   a.click();
-  
+
   gtag('event', 'download_' + modelToDownloadName, {
     'send_to': 'G-YVVR1546XJ',
     'event_category': 'Model download',
@@ -493,9 +563,9 @@ function downloadModel(modelToDownloadName)
 }
 
 function downloadAllSelectedModels(){
-  
+
   listOfNames = []
-  
+
   for(var i = 0; i < selectedModels.length; i++)
   {
     if(selectedModels[i])
@@ -510,24 +580,26 @@ function downloadAllSelectedModels(){
   }
 
   selectedModels.fill(false);
+  scrollToTop();
   removeContent();
   populate([]);
   errorMessage(true, "justdownloaded")
   viewingSelectedModels = true;
-  updateCounters();
+  updateCounters(lastFapplied, filteredData, "justdownloaded");
 }
 
-$("#returnToGalleryButton").change(function () {
+$("#returnToGalleryButton").click(function () {
   //update select all icon
   document.getElementById("select-all").classList.remove("applied");
   document.getElementById("view-selected").classList.remove("applied");
 
+  viewingSelectedModels = false;
   removeContent();
   scrollToTop();
   curIndex = 0;
   populate(filteredData);
   updateCounters(lastFapplied, filteredData);
-  
+
   if (filteredData.length == 0) {
     errorMessage(true, "filter")
   }
@@ -560,63 +632,6 @@ $("#checkbox-Simulations").change(function () {
   applyFilters();
 });
 
-var isPaused = false;
-
-$('#download-all').click(function() {
-  
-  // for the test download
-  namesOfSelectedModels = ["0166_0001", "0107_0001"]
-  for(var i = 0; i < namesOfSelectedModels.length; i++)
-  {
-    viewingModel = namesOfSelectedModels[i];
-    var fileUrl = 'svprojects/' + viewingModel + '.zip';
-    downloadModel(fileUrl, viewingModel);
-    downloadProgress(fileUrl);
-    while(isPaused){
-      sleep(300);
-    }
-  }
-});
-
-async function downloadProgress(fileUrl) {
-  isPaused = true;
-
-  // instead of response.json() and other methods
-  let response = await fetch(fileUrl);
-
-  const reader = response.body.getReader();
-
-  // infinite loop while the body is downloading
-  while(true) {
-    // done is true for the last chunk
-    // value is Uint8Array of the chunk bytes
-    const {done, value} = await reader.read();
-
-    if (done) {
-      isPaused = false;
-      console.log("done download")
-      return true;
-    }
-  }
-}
-
-function sleep(milliseconds) {
-  const date = Date.now();
-  let currentDate = null;
-  do {
-    currentDate = Date.now(); console.log("running loop")
-  } while (currentDate - date < milliseconds || !isPaused);
-  console.log("end loop")
-}
-
-function downloadModel(fileUrl){
-  // window.open('svprojects/' + viewingModel + '.zip');
-  var a = document.createElement("a");
-  a.href = fileUrl;
-  a.setAttribute("download", viewingModel);
-  a.click();
-}
-
 function checkWidth() {
     if (screen.width >= 769 && (document.documentElement.clientWidth >= 769)) {
         if (smallScreen) {
@@ -641,15 +656,18 @@ function initializeSelectedModels()
 $(window).ready(checkWidth);
 $(window).resize(checkWidth);
 
-function updateCounters(fApplied, fData)
+function updateCounters(fApplied, fData, string)
 {
   //update counter of selected models on bucket
   var count = selectedModels.filter(value => value === true).length;
   document.getElementById('selected-counter').textContent = count;
-  
-  var counterPanel = document.getElementById("counterPanel");
 
-  if(viewingSelectedModels)
+  var counterPanel = document.getElementById("counterPanel");
+  if(string == "justdownloaded")
+  {
+    counterPanel.textContent = "";
+  }
+  else if (viewingSelectedModels)
   {
     if (smallScreen) {
       counterPanel.textContent = count + " selected";
@@ -662,7 +680,7 @@ function updateCounters(fApplied, fData)
     viewSelectedIcon = document.getElementById("view-selected");
     viewSelectedIcon.classList.add("applied");
   }
-  if(!viewingSelectedModels)
+  else if (!viewingSelectedModels)
   {
     // lastFdata = fData;
     lastFapplied = fApplied;
@@ -694,8 +712,11 @@ window.addEventListener('scroll', () => {
   var footerHeight = $('#contact-section').height();
   // var footerHeight = document.getElementById("contact-section").height()
   var padding = 50;
-  if (window.scrollY + window.innerHeight + footerHeight + padding>= document.documentElement.scrollHeight) {
-    populate(filteredData, 8);
+  if(!viewingSelectedModels)
+  {
+    if (window.scrollY + window.innerHeight + footerHeight + padding>= document.documentElement.scrollHeight) {
+      populate(filteredData, 8);
+    }
   }
 });
 
@@ -789,13 +810,13 @@ var buttonFilter = {
 
 $("#view-selected").click(function() {
   viewingSelectedModels = !viewingSelectedModels;
-  
+
   if(viewingSelectedModels)
   {
     triggerFilter(false);
 
     var display = []
-  
+
     for(var i = 0; i < data.length; i++)
     {
       if(selectedModels[i])
@@ -818,7 +839,7 @@ $("#view-selected").click(function() {
 
     //parameters should not have an impact
     updateCounters(lastFapplied, filteredData);
-    
+
     //update select all icon
     if(display.length > 0)
     {
@@ -839,7 +860,7 @@ $("#view-selected").click(function() {
     curIndex = 0;
     populate(filteredData);
     updateCounters(lastFapplied, filteredData);
-    
+
     if (filteredData.length == 0) {
       errorMessage(true, "filter")
     }
@@ -847,14 +868,14 @@ $("#view-selected").click(function() {
       errorMessage(false, "filter")
     }
   }
-  
+
 });
 
 function errorMessage(isOn, whichToDisplay)
 {
   var errorMsg = document.getElementById('error-msg');
   var button = document.getElementById("returnToGalleryButton");
- 
+
   //determines which message is showing
   if(whichToDisplay == "filter")
   {
