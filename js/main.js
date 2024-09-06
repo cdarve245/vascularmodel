@@ -200,8 +200,35 @@ function greetingText(data)
 
   $('.details-text').scrollTop(0);
 
+  // reset $('#modal-greeting')[0] from previous changes
+  $('#modal-greeting')[0].innerText = "";
+  $('#modal-greeting')[0].innerHTML = ""; 
+
   //modal's first line
-  $('#modal-greeting')[0].innerText = 'You are viewing ' + data['Name'] + '.\nHere are the details:'
+  // $('#modal-greeting')[0].innerText = 'You are viewing ' + data['Name'] + '.\nHere are the details:';
+
+  $('#modal-greeting')[0].innerText = 'You are viewing ' + data['Name'] + ". ";
+  var introText = document.createElement("div");
+
+  // var sdr_DOI = data["SDR DOI"];
+
+  // if(sdr_DOI != "-")
+  // {
+  //   var sdr_DOI_link = document.createElement("a")
+  //   sdr_DOI_link.setAttribute("href", sdr_DOI);
+  //   sdr_DOI_link.setAttribute("target", "_blank");
+  //   sdr_DOI_link.classList.add("link");
+  //   sdr_DOI_link.setAttribute("style", "word-wrap: break-word");
+  //   sdr_DOI_link.textContent = sdr_DOI;
+
+  //   introText.setAttribute("style", "margin-top: 15px");
+    
+  //   $('#modal-greeting')[0].appendChild(sdr_DOI_link);
+  // }
+
+  introText.textContent = '\nHere are the details:';
+
+  $('#modal-greeting')[0].appendChild(introText);
 
   //details inside window
   var details = "";
@@ -321,6 +348,29 @@ function greetingText(data)
       modalclosure.appendChild(text);
     }
 
+    // var sdr_DOI = data["SDR DOI"];
+
+    // if(sdr_DOI != "-")
+    // {
+    //   var doi_div = document.createElement("div");
+    //   doi_div.classList.add("newParagraph");
+
+    //   var descOfDoi = document.createElement("span");
+    //   descOfDoi.textContent = "\n\nModel DOI: "
+
+    //   var sdr_DOI_link = document.createElement("a")
+    //   sdr_DOI_link.setAttribute("href", sdr_DOI);
+    //   sdr_DOI_link.setAttribute("target", "_blank");
+    //   sdr_DOI_link.classList.add("link");
+    //   sdr_DOI_link.setAttribute("style", "word-wrap: break-word")
+    //   sdr_DOI_link.textContent = sdr_DOI;
+
+    //   doi_div.appendChild(descOfDoi);
+    //   doi_div.appendChild(sdr_DOI_link);
+    //   modalclosure.appendChild(doi_div);
+    // }
+
+
     //after notes, prints size
     var sizeText = document.createElement("div");
     sizeText.classList.add("newParagraph");
@@ -358,8 +408,34 @@ function greetingForSimulationResults()
 
   $('.details-text').scrollTop(0);
 
+  // reset $('#modal-greeting')[0] from viewing the model
+  $('#modal-greeting')[0].innerText = "";
+  $('#modal-greeting')[0].innerHTML = ""; 
+
+  // var sdr_DOI = viewingModel["SDR DOI"]
+  // if(sdr_DOI != "-")
+  // {
+  //   var doi_div = document.createElement("div");
+  //   doi_div.style = "margin-bottom: 15px"
+
+  //   var sdr_DOI_link = document.createElement("a")
+  //   sdr_DOI_link.setAttribute("href", sdr_DOI);
+  //   sdr_DOI_link.setAttribute("target", "_blank");
+  //   sdr_DOI_link.classList.add("link");
+  //   sdr_DOI_link.setAttribute("style", "word-wrap: break-word")
+  //   sdr_DOI_link.textContent = sdr_DOI;
+
+  //   doi_div.appendChild(sdr_DOI_link);
+  //   $('#modal-greeting')[0].prepend(doi_div);
+  // }
+
+  var detailsText = document.createElement("div");
+  detailsText.textContent = 'Here are the details:'
+
+  $('#modal-greeting')[0].appendChild(detailsText);
+
   //modal's first line
-  $('#modal-greeting')[0].innerText = 'Here are the details:'
+  // $('#modal-greeting')[0].innerText = 'Here are the details:'
 
   //details inside window
   var details = "";
@@ -462,8 +538,33 @@ function greetingForSimulationResults()
   else
   {
     //if no notes, only prints size
-    modalclosure.innerText = 'The size of this result is ' + sizeConverter(size);
+    var sizeText = document.createElement("div");
+    sizeText.textContent = '\n\nThe size of this result is ' + sizeConverter(size);
+
+    modalclosure.appendChild(sizeText);
   }
+
+  // var sdr_DOI = viewingModel["SDR DOI"];
+
+  // if(sdr_DOI != "-")
+  // {
+  //   var doi_div = document.createElement("div");
+  //   doi_div.style = "margin-bottom: 15px"
+
+  //   var descOfDoi = document.createElement("span");
+  //   descOfDoi.textContent = "\n\nModel DOI: "
+
+  //   var sdr_DOI_link = document.createElement("a")
+  //   sdr_DOI_link.setAttribute("href", sdr_DOI);
+  //   sdr_DOI_link.setAttribute("target", "_blank");
+  //   sdr_DOI_link.classList.add("link");
+  //   sdr_DOI_link.setAttribute("style", "word-wrap: break-word")
+  //   sdr_DOI_link.textContent = sdr_DOI;
+
+  //   doi_div.appendChild(descOfDoi);
+  //   doi_div.appendChild(sdr_DOI_link);
+  //   modalclosure.prepend(doi_div);
+  // }
 } //end greetingForSimulationResults()
 
 //function to prevent overlay from exiting when the user clicks on the modal
